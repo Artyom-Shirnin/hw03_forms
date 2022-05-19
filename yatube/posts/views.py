@@ -1,20 +1,20 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.csrf import csrf_exempt
 from .models import Group, Post, User
 from .forms import PostForm
-from django.views.decorators.csrf import csrf_exempt
 
 
 def index(request):
     post_list = Post.objects.all()
-    paginator = Paginator(post_list, 10) 
+    paginator = Paginator(post_list, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {
         'page_obj': page_obj,
     }
-    return render(request, 'posts/index.html', context) 
+    return render(request, 'posts/index.html', context)
 
 
 def group_posts(request, slug):
