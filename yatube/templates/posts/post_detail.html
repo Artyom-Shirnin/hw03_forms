@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru"> 
+  <head>  
+    <meta charset="utf-8">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}"> 
+    <title>
+      Пост {{title}}
+    </title>
+  </head>
+  <body>       
+    <header>
+      <nav class="navbar navbar-light" style="background-color: lightskyblue">
+        <div class="container">
+          <a class="navbar-brand" href="/">
+            <img src="/static/img/logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
+            <span style="color:red">Ya</span>tube
+          </a>
+        </div>
+      </nav>      
+    </header>
+    <main>
+      <div class="row">
+        <aside class="col-12 col-md-3">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              Дата публикации: {{ posts.pub_date|date:"d E Y" }}
+            </li>
+            {% if posts.group %} 
+              <li class="list-group-item">
+                Группа: {{ posts.group.title }}
+                <a href="{% url 'posts:group_list' posts.group.slug %}">
+                  все записи группы
+                </a>
+            {% endif %}
+              </li>
+              <li class="list-group-item">
+                Автор: {{ posts.author.get_full_name }}
+              </li>
+              {% if user == posts.author %}
+              <a class="btn btn-primary" href="{% url 'posts:post_edit' posts.id %}">
+                Редактировать запись
+              </a>
+            {% endif %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+              Всего постов автора:  <span > {{ posts_count }} </span>
+            </li>
+            <li class="list-group-item">
+              <a href="{% url 'posts:profile' posts.author.username %}">все посты пользователя</a>
+            </li>
+          </ul>
+        </aside>
+        <article class="col-12 col-md-9">
+          <p>
+            {{ posts.text }} 
+          </p>
+        </article>
+      </div> 
+    </main>
+    <footer class="border-top text-center py-3">
+      <p>© {{ year }} Copyright <span style="color:red">Ya</span>tube</p>    
+    </footer>
+  </body>
+</html> 
