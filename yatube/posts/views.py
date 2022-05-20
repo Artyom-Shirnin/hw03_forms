@@ -6,11 +6,16 @@ from .models import Group, Post, User
 from .forms import PostForm
 
 
-def index(request):
-    post_list = Post.objects.all()
+def page_look(post_list, request):
     paginator = Paginator(post_list, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    return page_obj
+
+
+def index(request):
+    post_list = Post.objects.select_related('author')
+    page_obj = page_look(post_list, request)
     context = {
         'page_obj': page_obj,
     }
@@ -20,9 +25,7 @@ def index(request):
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
     post_list = group.posts.all()
-    paginator = Paginator(post_list, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = page_look(post_list, request)
     title = f'Записи сообщества {group.title}'
     description = group.description
     context = {
@@ -38,9 +41,7 @@ def profile(request, username):
     author = get_object_or_404(User, username=username)
     author_posts = author.posts.all()
     posts_count = author.posts.count()
-    paginator = Paginator(author_posts, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = page_look(author_posts, request)
     context = {
         'author': author,
         'posts': author_posts,
